@@ -1,6 +1,6 @@
 import { PropTypes } from "prop-types";
 import styles from "./Card.module.scss";
-import { useImage } from "@/utils/useImage";
+import { useImage } from "@/hooks/useImage";
 
 export const Card = ({
   background,
