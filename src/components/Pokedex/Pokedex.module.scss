@@ -1,0 +1,27 @@
+.pokedex-container {
+  padding-top: 4rem;
+
+  &__title {
+    text-align: left;
+  }
+
+  &__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media screen and (min-width: 992px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media screen and (min-width: 380px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media screen and (min-width: 576px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
