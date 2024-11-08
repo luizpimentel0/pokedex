@@ -2,23 +2,9 @@ import { PropTypes } from "prop-types";
 import styles from "./PokemonCard.module.scss";
 import clsx from "clsx";
 
-export const PokemonCard = ({
-  id,
-  name,
-  number,
-  height,
-  weight,
-  type,
-  types,
-  abilities,
-  photo,
-  stats,
-}) => {
+export const PokemonCard = ({ name, number, type, types, photo, onClick }) => {
   return (
-    <li
-      className={clsx(styles.pokemon, styles[type])}
-      // onClick="openPokemonModal(${pokemon.id})"
-    >
+    <li className={clsx(styles.pokemon, styles[type])} onClick={onClick}>
       <span className={styles["number"]}>#{number}</span>
       <span className={styles["name"]}>{name}</span>
 
@@ -37,14 +23,10 @@ export const PokemonCard = ({
 };
 
 PokemonCard.propTypes = {
-  id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   number: PropTypes.string.isRequired,
-  height: PropTypes.number.isRequired,
-  weight: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   types: PropTypes.arrayOf(PropTypes.string).isRequired,
-  abilities: PropTypes.arrayOf(PropTypes.string).isRequired,
   photo: PropTypes.string.isRequired,
-  stats: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onClick: PropTypes.func.isRequired,
 };
