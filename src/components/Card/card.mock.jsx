@@ -1,6 +1,6 @@
 export const cardMock = [
   {
-    title: "test",
+    title: "Pokémon GO",
     titleColor: "#fefe",
     description: "lorem ipsum",
     descriptionColor: "#4c1b90",
@@ -9,21 +9,21 @@ export const cardMock = [
     imageAlt: "pokemon-go",
   },
   {
-    title: "test",
+    title: "Nova série Pokémon",
     titleColor: "#fefe",
     background: "#ed6b2f",
     imagePath: "pokemon-new.webp",
     imageAlt: "pokemon-new-serie",
   },
   {
-    title: "test",
+    title: "Pokémon",
     titleColor: "#fefe",
     background: "#e2350d",
     imagePath: "pokemons.jpg",
     imageAlt: "pokemons",
   },
   {
-    title: "test",
+    title: "Aniversário",
     titleColor: "#fefe",
     description: "lorem ipsum",
     descriptionColor: "#4c1b90",
@@ -32,7 +32,7 @@ export const cardMock = [
     imageAlt: "pokemons",
   },
   {
-    title: "test",
+    title: "Pokémon",
     titleColor: "#fefe",
     description: "lorem ipsum",
     descriptionColor: "#31a7d7",
@@ -41,7 +41,7 @@ export const cardMock = [
     imageAlt: "pokemons",
   },
   {
-    title: "test",
+    title: "Pikachu",
     titleColor: "#fefe",
     description: "lorem ipsum",
     descriptionColor: "#212121",
