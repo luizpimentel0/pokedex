@@ -8,7 +8,6 @@ export const useImage = (fileName) => {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        console.log("Fetching image...", fileName);
         const imageUrl = `/images/${fileName}`; // A URL relativa à raiz (pasta public)
         setImage(imageUrl); // Setando a URL da
       } catch (err) {
