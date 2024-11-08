@@ -1,0 +1,40 @@
+.card-container {
+  width: 100%;
+  object-fit: cover;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .card {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+
+    .card-picture {
+      overflow: hidden;
+      height: 100%;
+      img {
+        display: block;
+
+        margin: 0;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .card-content {
+      padding: 0.5rem;
+      &__title {
+        margin: 0;
+      }
+    }
+  }
+}
