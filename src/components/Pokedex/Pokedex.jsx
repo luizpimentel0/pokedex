@@ -1,12 +1,12 @@
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
+  useInfiniteQuery,
 } from "@tanstack/react-query";
 import styles from "./Pokedex.module.scss";
 import { PokemonCardSkeleton } from "./components/PokemonCardSkeleton/index";
 import { PokemonCard } from "./components/PokemonCard/index";
-import { useState } from "react";
+import { useCallback, useMemo, useState, useRef } from "react";
 import { Modal } from "./components/Modal/index";
 
 const parsePokemonDetail = ({
@@ -47,32 +47,59 @@ const getPokemonData = async (pokemon) => {
   return parsePokemonDetail(pokemonDetail);
 };
 
-const fetchPokemons = async (offset = 0, limit = 6) => {
-  const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`;
+const POKEMONS_PER_PAGE = 6;
+
+const fetchPokemons = async ({ pageParam }) => {
+  const offset = pageParam ? pageParam : 0;
+  const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${POKEMONS_PER_PAGE}`;
 
   const response = await fetch(url);
   const data = await response.json();
   const pokemons = data.results;
   if (!pokemons) return [];
 
-  const pokemonDetails = pokemons.map((pokemon) => getPokemonData(pokemon));
+  const pokemonDetails = await Promise.all(
+    pokemons.map((pokemon) => getPokemonData(pokemon)),
+  );
 
-  return Promise.all(pokemonDetails);
+  return { data: pokemonDetails, offset: offset + POKEMONS_PER_PAGE };
 };
 
 const PokedexComponent = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentPokemon, setCurrentPokemon] = useState(null);
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["pokemons"],
-    queryFn: fetchPokemons,
-    refetchOnWindowFocus: false,
-  });
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetching } =
+    useInfiniteQuery({
+      queryKey: ["pokemons"],
+      queryFn: ({ pageParam }) => fetchPokemons({ pageParam }),
+      getNextPageParam: (lastPage, pages) => lastPage.offset,
+      refetchOnWindowFocus: false,
+    });
+
+  const handleObserver = useRef();
+  const lastElement = useCallback(
+    (element) => {
+      if (isLoading) return;
+      if (handleObserver.current) handleObserver.current.disconnect();
+      handleObserver.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetching) {
+          fetchNextPage();
+        }
+      });
+      if (element) handleObserver.current.observe(element);
+    },
+    [isLoading, hasNextPage],
+  );
 
   const showModal = (pokemon) => {
     setModalOpen(true);
     setCurrentPokemon(pokemon);
   };
+
+  const pokemons = useMemo(
+    () => data?.pages.flatMap((item) => item.data),
+    [data],
+  );
 
   if (error) return <div>Error</div>;
 
@@ -81,22 +108,24 @@ const PokedexComponent = () => {
       <div className={styles["pokedex-container"]}>
         <h1 className={styles["pokedex-container__title"]}>Pokédex</h1>
         <ol className={styles["pokedex-container__cards"]}>
-          {data &&
-            data.map((pokemon) => (
-              <PokemonCard
-                id={pokemon.id}
-                key={pokemon.id}
-                number={pokemon.number}
-                name={pokemon.name}
-                height={pokemon.height}
-                weight={pokemon.weight}
-                type={pokemon.type}
-                types={pokemon.types}
-                abilities={pokemon.abilities}
-                photo={pokemon.photo}
-                stats={pokemon.stats}
-                onClick={() => showModal(pokemon)}
-              />
+          {pokemons &&
+            pokemons.map((pokemon, i) => (
+              <div key={i} ref={pokemons.length === i + 1 ? lastElement : null}>
+                <PokemonCard
+                  id={pokemon.id}
+                  key={pokemon.id}
+                  number={pokemon.number}
+                  name={pokemon.name}
+                  height={pokemon.height}
+                  weight={pokemon.weight}
+                  type={pokemon.type}
+                  types={pokemon.types}
+                  abilities={pokemon.abilities}
+                  photo={pokemon.photo}
+                  stats={pokemon.stats}
+                  onClick={() => showModal(pokemon)}
+                />
+              </div>
             ))}
         </ol>
         {isLoading && <PokemonCardSkeleton />}
